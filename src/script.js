@@ -1,37 +1,34 @@
 const usersList = document.querySelector('.users');
 
-let currentPage = 0;
 const users = [];
+let currentPage = 1;
 
-async function fetchUsers(url) {
+async function getUsers(url) {
 	const response = await fetch(url);
 	const json = await response.json();
-	
 	const data = json.data;
 	const totalPages = json.total_pages;
-
-	currentPage++;
 
 	data.forEach(user => users.push(user));
 
 	while(currentPage < totalPages) {
-		await fetchUsers(`https://reqres.in/api/users?page=${++currentPage}`);
+		await getUsers(`https://reqres.in/api/users?page=${++currentPage}`);
 	}
 
 	return users;
 }
 
 async function listUsers(url) {
-	const users = await fetchUsers(url);
+	const users = await getUsers(url);
 
-	users.forEach(user => {
+	users.forEach(({avatar, first_name, last_name, email}) => {
 		const userInfo = `
 			<div class="user">
-				<img src="${user.avatar}">
+				<img src="${avatar}">
 
 				<div class="data">
-					<h4 class="name">${user.first_name} ${user.last_name}</h4>
-					<p class="email">${user.email}</p>
+					<h4 class="name">${first_name} ${last_name}</h4>
+					<p class="email">${email}</p>
 				</div>
 			</div>
 		`
